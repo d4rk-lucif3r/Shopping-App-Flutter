@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import './widgets/banner.dart';
+import './screens/products_overview_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,10 +13,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Shopping App',
+      
       theme: ThemeData(
+        backgroundColor: Colors.black,
+        canvasColor: Colors.black,
         primarySwatch: Colors.red,
+        accentColor: Colors.amberAccent,
+        fontFamily: 'Lato'
       ),
-      home: MyHomePage(title: 'Shopping App'),
+      home: ProductsOverviewScreen(),
     );
   }
 }
@@ -38,9 +44,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: Center(
           child: Text(
-            'You have pushed the button this many times:',
+            '',
           ),
-          // This trailing comma makes auto-formatting nicer for build methods.
         )));
   }
 }
