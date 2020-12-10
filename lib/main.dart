@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 // import './widgets/banner.dart';
 import './providers/products_provider.dart';
+import './providers/cart.dart';
 import './screens/product_detail_screen.dart';
 import './screens/products_overview_screen.dart';
 
@@ -14,8 +15,15 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (ctx) => ProductsProviders(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => ProductsProviders(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => Cart(),
+        ),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Shopping App',
@@ -33,7 +41,8 @@ class MyApp extends StatelessWidget {
               return CupertinoPageRoute(
                   builder: (_) => ProductsOverviewScreen(), settings: settings);
             case ProductDetailScreen.routeName:
-              return CupertinoPageRoute(builder: (_) => ProductDetailScreen(),settings: settings);
+              return CupertinoPageRoute(
+                  builder: (_) => ProductDetailScreen(), settings: settings);
             default:
               return CupertinoPageRoute(
                   builder: (_) => ProductsOverviewScreen(), settings: settings);
