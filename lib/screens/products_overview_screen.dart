@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/product.dart';
+import '../widgets/banner.dart';
 import '../widgets/products_item.dart';
 
 class ProductsOverviewScreen extends StatelessWidget {
@@ -41,7 +42,7 @@ class ProductsOverviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return wrapWithBanner(Scaffold(
         appBar: AppBar(
           title: Text('Shopping App'),
           centerTitle: true,
@@ -60,6 +61,6 @@ class ProductsOverviewScreen extends StatelessWidget {
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
           ),
-        ));
+        )));
   }
 }
