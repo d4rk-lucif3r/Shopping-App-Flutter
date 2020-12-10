@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import './widgets/banner.dart';
+import './screens/product_detail_screen.dart';
 import './screens/products_overview_screen.dart';
+import './widgets/banner.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,15 +15,23 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Shopping App',
-      
       theme: ThemeData(
-        backgroundColor: Colors.black,
-        canvasColor: Colors.black,
-        primarySwatch: Colors.red,
-        accentColor: Colors.amberAccent,
-        fontFamily: 'Lato'
-      ),
-      home: ProductsOverviewScreen(),
+          backgroundColor: Colors.black,
+          canvasColor: Colors.black,
+          primarySwatch: Colors.red,
+          accentColor: Colors.amberAccent,
+          fontFamily: 'Lato'),
+      initialRoute: '/',
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/':
+            return CupertinoPageRoute(builder: (_) => ProductsOverviewScreen());
+          case ProductDetailScreen.routeName:
+            return CupertinoPageRoute(builder: (_) => ProductDetailScreen());
+          default:
+            return CupertinoPageRoute(builder: (_) => ProductsOverviewScreen());
+        }
+      },
     );
   }
 }
