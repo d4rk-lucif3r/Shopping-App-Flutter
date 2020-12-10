@@ -13,7 +13,7 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context);
+    final product = Provider.of<Product>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -37,15 +37,18 @@ class ProductItem extends StatelessWidget {
             softWrap: true,
           ),
           backgroundColor: Colors.blueGrey.withOpacity(.87),
-          leading: IconButton(
-            icon: Icon(
-              product.isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: Colors.pink,
-            ),
-            onPressed: () {
-              product.togglefavoriteStatus();
-            },
-          ),
+          leading: Consumer<Product>(
+              builder: (ctx, product, child) => IconButton(
+                    icon: Icon(
+                      product.isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: Colors.pink,
+                    ),
+                    onPressed: () {
+                      product.togglefavoriteStatus();
+                    },
+                  )),
           trailing: IconButton(
             icon: Icon(
               Icons.shopping_cart,
