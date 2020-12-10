@@ -7,6 +7,7 @@ import './providers/orders.dart';
 // import './widgets/banner.dart';
 import './providers/products_provider.dart';
 import './screens/cart_screen.dart';
+import './screens/orders_screen.dart';
 import './screens/product_detail_screen.dart';
 import './screens/products_overview_screen.dart';
 
@@ -51,6 +52,10 @@ class MyApp extends StatelessWidget {
             case CartScreen.routeName:
               return CupertinoPageRoute(
                   builder: (_) => CartScreen(), settings: settings);
+
+            case OrdersScreen.routeName:
+              return CupertinoPageRoute(
+                  builder: (_) => OrdersScreen(), settings: settings);
             default:
               return CupertinoPageRoute(
                   builder: (_) => ProductsOverviewScreen(), settings: settings);
