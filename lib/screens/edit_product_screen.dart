@@ -26,13 +26,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _saveForm() {
-    _form.currentState.save();
-    print(_editedProduct.title);
-    print(_editedProduct.price);
-    print(_editedProduct.description);
-    print(_editedProduct.imageUrl);
-    
-
+    final isValid = _form.currentState.validate();
+    if (isValid) {
+      _form.currentState.save();
+    }
   }
 
   void dispose() {
@@ -44,7 +41,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   Widget _builderTextWidget({
-    String title,
+    String textValue,
     bool istitle = false,
     bool isPrice = false,
     bool isDescription = false,
@@ -53,7 +50,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return Container(
       child: TextFormField(
         decoration: InputDecoration(
-          labelText: title,
+          labelText: textValue,
         ),
         textInputAction: isUrl
             ? TextInputAction.done
@@ -72,6 +69,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
           if (isUrl) {
             _saveForm();
           }
+        },
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Please Provide a $textValue.';
+          }
+          return null;
         },
         onSaved: (value) {
           if (istitle) {
@@ -135,13 +138,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Form(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             key: _form,
             child: ListView(
               children: <Widget>[
-                _builderTextWidget(title: 'Title', istitle: true),
-                _builderTextWidget(title: 'Price', isPrice: true),
+                _builderTextWidget(textValue: 'Title', istitle: true),
+                _builderTextWidget(textValue: 'Price', isPrice: true),
                 _builderTextWidget(
-                  title: 'Description',
+                  textValue: 'Description',
                   isPrice: false,
                   isDescription: true,
                 ),
@@ -177,7 +181,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     ),
                     Expanded(
                         child: _builderTextWidget(
-                            title: 'Image Url', isUrl: true)),
+                            textValue: 'Image Url', isUrl: true)),
                   ],
                 ),
               ],
