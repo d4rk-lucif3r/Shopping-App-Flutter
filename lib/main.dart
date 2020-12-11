@@ -10,7 +10,7 @@ import './screens/cart_screen.dart';
 import './screens/orders_screen.dart';
 import './screens/product_detail_screen.dart';
 import './screens/products_overview_screen.dart';
-
+import './screens/userProducts_screen.dart';
 void main() {
   runApp(MyApp());
 }
@@ -56,6 +56,9 @@ class MyApp extends StatelessWidget {
             case OrdersScreen.routeName:
               return CupertinoPageRoute(
                   builder: (_) => OrdersScreen(), settings: settings);
+            case UserProductScreen.routeName:
+              return CupertinoPageRoute(
+                  builder: (_) => UserProductScreen(), settings: settings);
             default:
               return CupertinoPageRoute(
                   builder: (_) => ProductsOverviewScreen(), settings: settings);

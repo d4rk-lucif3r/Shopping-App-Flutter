@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/orders_screen.dart';
+import '../screens/userProducts_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -13,11 +14,13 @@ class AppDrawer extends StatelessWidget {
           ),
           Divider(),
           ClipRRect(
+          
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(15),
               topRight: Radius.circular(15),
             ),
             child: ListTile(
+              
               tileColor: Colors.white,
               leading: Icon(Icons.shop),
               title: Text('Shop'),
@@ -25,6 +28,15 @@ class AppDrawer extends StatelessWidget {
                 Navigator.of(context).pushReplacementNamed('/');
               },
             ),
+          ),
+          ListTile(
+            tileColor: Colors.white,
+            leading: Icon(Icons.edit),
+            title: Text('Manage Products'),
+            onTap: () {
+              Navigator.of(context)
+                  .pushReplacementNamed(UserProductScreen.routeName);
+            },
           ),
           ClipRRect(
             borderRadius: BorderRadius.only(

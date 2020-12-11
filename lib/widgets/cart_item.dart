@@ -28,12 +28,8 @@ class CartItems extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              Icon(
-                Icons.delete,
-                color: Colors.black,
-              ),
               Icon(
                 Icons.delete,
                 color: Colors.black,
@@ -42,6 +38,7 @@ class CartItems extends StatelessWidget {
           ),
         ),
       ),
+      direction: DismissDirection.endToStart,
       onDismissed: (direction) {
         Provider.of<Cart>(context, listen: false).removeItem(productId);
       },
