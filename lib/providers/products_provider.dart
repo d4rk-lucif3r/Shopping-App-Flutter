@@ -46,7 +46,8 @@ class ProductsProviders with ChangeNotifier {
 
     return [..._items];
   }
-  List<Product> get favoriteItems{
+
+  List<Product> get favoriteItems {
     return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
   // void showfavoritesOnly() {
@@ -59,8 +60,15 @@ class ProductsProviders with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addProduct() {
-    //_items.addAll(iterable);
+  void addProduct(Product product) {
+    final newProduct = Product(
+      id: DateTime.now().toString(),
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      imageUrl: product.imageUrl,
+    );
+    _items.insert(0, newProduct);
     notifyListeners();
   }
 }
