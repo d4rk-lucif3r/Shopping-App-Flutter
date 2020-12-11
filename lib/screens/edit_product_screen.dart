@@ -31,9 +31,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
-      if (!_imageValidator(_imageUrlController.text)) {
-        return
-      }
       setState(() {});
     }
   }
@@ -221,7 +218,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                 ),
                               )
                             : !_imageValidator(_imageUrlController.text)
-                                ? Container()
+                                ? Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: FittedBox(
+                                      child: Center(
+                                          child: Text(
+                                        'Enter valid url',
+                                        style: TextStyle(
+                                            color:
+                                                Theme.of(context).errorColor),
+                                      )),
+                                    ),
+                                  )
                                 : FittedBox(
                                     child: Image.network(
                                       _imageUrlController.text,
