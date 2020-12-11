@@ -4,13 +4,14 @@ import 'package:provider/provider.dart';
 
 import './providers/cart.dart';
 import './providers/orders.dart';
-// import './widgets/banner.dart';
 import './providers/products_provider.dart';
 import './screens/cart_screen.dart';
+import './screens/edit_product_screen.dart';
 import './screens/orders_screen.dart';
 import './screens/product_detail_screen.dart';
 import './screens/products_overview_screen.dart';
 import './screens/userProducts_screen.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -59,6 +60,9 @@ class MyApp extends StatelessWidget {
             case UserProductScreen.routeName:
               return CupertinoPageRoute(
                   builder: (_) => UserProductScreen(), settings: settings);
+            case EditProductScreen.routeName:
+              return CupertinoPageRoute(
+                  builder: (_) => EditProductScreen(), settings: settings);
             default:
               return CupertinoPageRoute(
                   builder: (_) => ProductsOverviewScreen(), settings: settings);
