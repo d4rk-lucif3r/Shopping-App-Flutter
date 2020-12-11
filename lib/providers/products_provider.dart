@@ -69,14 +69,16 @@ class ProductsProviders with ChangeNotifier {
     const url =
         'https://shopping-app-daa11-default-rtdb.firebaseio.com/products.json';
     return http
-        .post(url,
-            body: json.encode({
-              'title': product.title,
-              'description': product.description,
-              'price': product.price,
-              'imageUrl': product.imageUrl,
-              'isFavorite': product.isFavorite,
-            }))
+        .post(
+      url,
+      body: json.encode({
+        'title': product.title,
+        'description': product.description,
+        'price': product.price,
+        'imageUrl': product.imageUrl,
+        'isFavorite': product.isFavorite,
+      }),
+    )
         .then((response) {
       final newProduct = Product(
         id: json.decode(response.body)['name'],
@@ -88,6 +90,9 @@ class ProductsProviders with ChangeNotifier {
       _items.add(newProduct);
       //_items.insert(0, newProduct);
       notifyListeners();
+    }).catchError((error) {
+      print(error);
+      throw error;
     });
   }
 
