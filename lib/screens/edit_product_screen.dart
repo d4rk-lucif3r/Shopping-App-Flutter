@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../providers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-productScreen';
@@ -9,6 +10,9 @@ class EditProductScreen extends StatefulWidget {
 class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
+  final _form = GlobalKey<FormState>();
+  var _editedProduct = Product(
+      id: null, title: null, description: null, price: null, imageUrl: null);
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
@@ -21,6 +25,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
+  void _saveForm() {
+    _form.currentState.save();
+    print(_editedProduct.title);
+    print(_editedProduct.price);
+    print(_editedProduct.description);
+    print(_editedProduct.imageUrl);
+    
+
+  }
+
   void dispose() {
     _imageUrlFocusNode.removeListener(_updateImageUrl);
     _imageUrlController.dispose();
@@ -31,28 +45,68 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   Widget _builderTextWidget({
     String title,
-    bool numberKeys = false,
-    bool description = false,
-    bool url = false,
+    bool istitle = false,
+    bool isPrice = false,
+    bool isDescription = false,
+    bool isUrl = false,
   }) {
     return Container(
       child: TextFormField(
         decoration: InputDecoration(
           labelText: title,
         ),
-        textInputAction: url
+        textInputAction: isUrl
             ? TextInputAction.done
-            : description
+            : isDescription
                 ? TextInputAction.newline
                 : TextInputAction.next,
-        keyboardType: url
+        keyboardType: isUrl
             ? TextInputType.url
-            : numberKeys
+            : isPrice
                 ? TextInputType.number
                 : TextInputType.name,
-        maxLines: description ? 3 : 1,
-        controller: url ? _imageUrlController : null,
-        focusNode: url ? _imageUrlFocusNode : null,
+        maxLines: isDescription ? 3 : 1,
+        controller: isUrl ? _imageUrlController : null,
+        focusNode: isUrl ? _imageUrlFocusNode : null,
+        onFieldSubmitted: (_) {
+          if (isUrl) {
+            _saveForm();
+          }
+        },
+        onSaved: (value) {
+          if (istitle) {
+            _editedProduct = Product(
+                id: null,
+                title: value,
+                description: _editedProduct.description,
+                price: _editedProduct.price,
+                imageUrl: _editedProduct.imageUrl);
+          }
+          if (isDescription) {
+            _editedProduct = Product(
+                id: null,
+                title: _editedProduct.title,
+                description: value,
+                price: _editedProduct.price,
+                imageUrl: _editedProduct.imageUrl);
+          }
+          if (isPrice) {
+            _editedProduct = Product(
+                id: null,
+                title: _editedProduct.title,
+                description: _editedProduct.description,
+                price: double.parse(value),
+                imageUrl: _editedProduct.imageUrl);
+          }
+          if (isUrl) {
+            _editedProduct = Product(
+                id: null,
+                title: _editedProduct.title,
+                description: _editedProduct.description,
+                price: _editedProduct.price,
+                imageUrl: value);
+          }
+        },
       ),
     );
   }
@@ -62,6 +116,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Product'),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.save,
+            ),
+            onPressed: _saveForm,
+          )
+        ],
       ),
       body: Card(
         elevation: 15,
@@ -73,14 +135,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Form(
+            key: _form,
             child: ListView(
               children: <Widget>[
-                _builderTextWidget(title: 'Title', numberKeys: false),
-                _builderTextWidget(title: 'Price', numberKeys: true),
+                _builderTextWidget(title: 'Title', istitle: true),
+                _builderTextWidget(title: 'Price', isPrice: true),
                 _builderTextWidget(
                   title: 'Description',
-                  numberKeys: false,
-                  description: true,
+                  isPrice: false,
+                  isDescription: true,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -113,10 +176,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             ),
                     ),
                     Expanded(
-                        child:
-                            _builderTextWidget(title: 'Image Url', url: true)),
+                        child: _builderTextWidget(
+                            title: 'Image Url', isUrl: true)),
                   ],
-                )
+                ),
               ],
             ),
           ),
