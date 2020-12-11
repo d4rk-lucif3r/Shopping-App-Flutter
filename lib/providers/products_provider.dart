@@ -50,7 +50,8 @@ class ProductsProviders with ChangeNotifier {
   List<Product> get favoriteItems {
     return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
-    Product findById(String id) {
+
+  Product findById(String id) {
     return _items.firstWhere((prod) => prod.id == id);
   }
   // void showfavoritesOnly() {
@@ -73,5 +74,15 @@ class ProductsProviders with ChangeNotifier {
     );
     _items.insert(0, newProduct);
     notifyListeners();
+  }
+
+  void updateProduct(String id, Product newProduct) {
+    final prodItems = _items.indexWhere((element) => element.id == id);
+    if (prodItems >= 0) {
+      _items[prodItems] = newProduct;
+      notifyListeners();
+    } else {
+      print('....');
+    }
   }
 }
