@@ -76,6 +76,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
             .updateProduct(_editedProduct.id, _editedProduct);
         Navigator.of(context).pop();
       } else {
+        
         Provider.of<ProductsProviders>(context, listen: false)
             .addProduct(_editedProduct);
         Navigator.of(context).pop();
