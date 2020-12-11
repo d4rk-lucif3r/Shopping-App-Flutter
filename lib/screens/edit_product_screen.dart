@@ -15,10 +15,38 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _form = GlobalKey<FormState>();
   var _editedProduct = Product(
       id: null, title: null, description: null, price: null, imageUrl: null);
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': '',
+  };
+  var _isInit = true;
+
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
+
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productID = ModalRoute.of(context).settings.arguments as String;
+      if (productID != null) {
+        _editedProduct = Provider.of<ProductsProviders>(context, listen: false)
+            .findById(productID);
+        _initValues = {
+          'title': _editedProduct.title,
+          'description': _editedProduct.description,
+          'price': _editedProduct.price.toString(),
+          'imageUrl': _editedProduct.imageUrl,
+        };
+      }
+    }
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   bool _imageValidator(String givenUrl) {
@@ -55,115 +83,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.dispose();
   }
 
-  Widget _builderTextWidget({
-    String textValue,
-    bool istitle = false,
-    bool isPrice = false,
-    bool isDescription = false,
-    bool isUrl = false,
-  }) {
-    return Container(
-      child: TextFormField(
-        decoration: InputDecoration(
-          labelText: textValue,
-        ),
-        textInputAction: isUrl
-            ? TextInputAction.done
-            : isDescription
-                ? TextInputAction.newline
-                : TextInputAction.next,
-        keyboardType: isUrl
-            ? TextInputType.url
-            : isPrice
-                ? TextInputType.number
-                : TextInputType.name,
-        maxLines: isDescription ? 3 : 1,
-        controller: isUrl ? _imageUrlController : null,
-        focusNode: isUrl ? _imageUrlFocusNode : null,
-        onFieldSubmitted: (_) {
-          if (isUrl) {
-            _saveForm();
-          }
-        },
-        validator: (value) {
-          if (value.isEmpty) {
-            return 'Please enter a $textValue.';
-          }
-
-          /* For Price */
-          if (isPrice) {
-            if (value.isEmpty) {
-              return 'Please Provide a $textValue.';
-            }
-            if (double.tryParse(value) == null) {
-              return 'Please Provide a Valid Number';
-            }
-            if (double.parse(value) <= 0) {
-              return 'Please a enter a number greater than 0';
-            }
-          }
-          /* For Description */
-          if (isDescription) {
-            if (value.isEmpty) {
-              return 'Please Provide a $textValue.';
-            }
-            if (value.length < 10) {
-              return 'Should be atleast 10 characters long';
-            }
-          }
-          if (isUrl) {
-            if (value.isEmpty) {
-              return 'Please Provide a $textValue.';
-            }
-            if (!value.startsWith('http') && !value.startsWith('https')) {
-              return 'Please enter a Valid Url';
-            }
-            if (!value.endsWith('.jpg') &&
-                !value.endsWith('.png') &&
-                !value.endsWith('.jpeg')) {
-              return 'Please enter a Valid Url. Accepts only jpg,jpeg,png';
-            }
-          }
-          return null;
-        },
-        onSaved: (value) {
-          if (istitle) {
-            _editedProduct = Product(
-                id: null,
-                title: value,
-                description: _editedProduct.description,
-                price: _editedProduct.price,
-                imageUrl: _editedProduct.imageUrl);
-          }
-          if (isDescription) {
-            _editedProduct = Product(
-                id: null,
-                title: _editedProduct.title,
-                description: value,
-                price: _editedProduct.price,
-                imageUrl: _editedProduct.imageUrl);
-          }
-          if (isPrice) {
-            _editedProduct = Product(
-                id: null,
-                title: _editedProduct.title,
-                description: _editedProduct.description,
-                price: double.parse(value),
-                imageUrl: _editedProduct.imageUrl);
-          }
-          if (isUrl) {
-            _editedProduct = Product(
-                id: null,
-                title: _editedProduct.title,
-                description: _editedProduct.description,
-                price: _editedProduct.price,
-                imageUrl: value);
-          }
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,12 +111,79 @@ class _EditProductScreenState extends State<EditProductScreen> {
             key: _form,
             child: ListView(
               children: <Widget>[
-                _builderTextWidget(textValue: 'Title', istitle: true),
-                _builderTextWidget(textValue: 'Price', isPrice: true),
-                _builderTextWidget(
-                  textValue: 'Description',
-                  isPrice: false,
-                  isDescription: true,
+                TextFormField(
+                  initialValue: _initValues['title'],
+                  decoration: InputDecoration(
+                    labelText: 'Enter Title',
+                  ),
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.name,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please enter a Title.';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _editedProduct = Product(
+                        id: null,
+                        title: value,
+                        description: _editedProduct.description,
+                        price: _editedProduct.price,
+                        imageUrl: _editedProduct.imageUrl);
+                  },
+                ),
+                TextFormField(
+                  initialValue: _initValues['price'],
+                  decoration: InputDecoration(
+                    labelText: 'Enter Price',
+                  ),
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.name,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please Provide a Price.';
+                    }
+                    if (value.length < 10) {
+                      return 'Should be atleast 10 characters long';
+                    }
+
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _editedProduct = Product(
+                        id: null,
+                        title: _editedProduct.title,
+                        description: _editedProduct.description,
+                        price: double.parse(value),
+                        imageUrl: _editedProduct.imageUrl);
+                  },
+                ),
+                TextFormField(
+                  initialValue: _initValues['description'],
+                  decoration: InputDecoration(
+                    labelText: 'Enter Description',
+                  ),
+                  textInputAction: TextInputAction.newline,
+                  maxLines: 3,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please Provide a Description.';
+                    }
+                    if (value.length < 10) {
+                      return 'Should be atleast 10 characters long';
+                    }
+
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _editedProduct = Product(
+                        id: null,
+                        title: _editedProduct.title,
+                        description: value,
+                        price: _editedProduct.price,
+                        imageUrl: _editedProduct.imageUrl);
+                  },
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -242,8 +228,42 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                     ),
                                   )),
                     Expanded(
-                        child: _builderTextWidget(
-                            textValue: 'Image Url', isUrl: true)),
+                      child: TextFormField(
+                        initialValue: _initValues['imageUrl'],
+                        decoration: InputDecoration(
+                          labelText: 'Enter Image Url',
+                        ),
+                        textInputAction: TextInputAction.done,
+                        controller: _imageUrlController,
+                        focusNode: _imageUrlFocusNode,
+                        onFieldSubmitted: (_) {
+                          _saveForm();
+                        },
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please Provide a Image Url.';
+                          }
+                          if (!value.startsWith('http') &&
+                              !value.startsWith('https')) {
+                            return 'Please enter a Valid Url';
+                          }
+                          if (!value.endsWith('.jpg') &&
+                              !value.endsWith('.png') &&
+                              !value.endsWith('.jpeg')) {
+                            return 'Please enter a Valid Url. Accepts only jpg,jpeg,png';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _editedProduct = Product(
+                              id: null,
+                              title: _editedProduct.title,
+                              description: _editedProduct.description,
+                              price: _editedProduct.price,
+                              imageUrl: value);
+                        },
+                      ),
+                    )
                   ],
                 ),
               ],
