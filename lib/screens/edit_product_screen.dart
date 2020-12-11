@@ -19,8 +19,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.initState();
   }
 
+  bool _imageValidator(String givenUrl) {
+    if ((!givenUrl.startsWith('http') && !givenUrl.startsWith('https')) ||
+        (!givenUrl.endsWith('.jpg') &&
+            !givenUrl.endsWith('.png') &&
+            !givenUrl.endsWith('.jpeg'))) {
+      return false;
+    }
+    return true;
+  }
+
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
+      if (!_imageValidator(_imageUrlController.text)) {
+        return
+      }
       setState(() {});
     }
   }
@@ -72,7 +85,42 @@ class _EditProductScreenState extends State<EditProductScreen> {
         },
         validator: (value) {
           if (value.isEmpty) {
-            return 'Please Provide a $textValue.';
+            return 'Please enter a $textValue.';
+          }
+
+          /* For Price */
+          if (isPrice) {
+            if (value.isEmpty) {
+              return 'Please Provide a $textValue.';
+            }
+            if (double.tryParse(value) == null) {
+              return 'Please Provide a Valid Number';
+            }
+            if (double.parse(value) <= 0) {
+              return 'Please a enter a number greater than 0';
+            }
+          }
+          /* For Description */
+          if (isDescription) {
+            if (value.isEmpty) {
+              return 'Please Provide a $textValue.';
+            }
+            if (value.length < 10) {
+              return 'Should be atleast 10 characters long';
+            }
+          }
+          if (isUrl) {
+            if (value.isEmpty) {
+              return 'Please Provide a $textValue.';
+            }
+            if (!value.startsWith('http') && !value.startsWith('https')) {
+              return 'Please enter a Valid Url';
+            }
+            if (!value.endsWith('.jpg') &&
+                !value.endsWith('.png') &&
+                !value.endsWith('.jpeg')) {
+              return 'Please enter a Valid Url. Accepts only jpg,jpeg,png';
+            }
           }
           return null;
         },
@@ -153,32 +201,33 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Container(
-                      height: 100,
-                      width: 100,
-                      margin: EdgeInsets.only(
-                        top: 8,
-                        right: 10,
-                      ),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                        width: 1,
-                        color: Colors.grey,
-                      )),
-                      child: _imageUrlController.text.isEmpty
-                          ? Text(
-                              'No URL added',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Theme.of(context).errorColor,
-                              ),
-                            )
-                          : FittedBox(
-                              child: Image.network(
-                                _imageUrlController.text,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                    ),
+                        height: 100,
+                        width: 100,
+                        margin: EdgeInsets.only(
+                          top: 8,
+                          right: 10,
+                        ),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                          width: 1,
+                          color: Colors.grey,
+                        )),
+                        child: _imageUrlController.text.isEmpty
+                            ? Text(
+                                'No URL added',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Theme.of(context).errorColor,
+                                ),
+                              )
+                            : !_imageValidator(_imageUrlController.text)
+                                ? Container()
+                                : FittedBox(
+                                    child: Image.network(
+                                      _imageUrlController.text,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )),
                     Expanded(
                         child: _builderTextWidget(
                             textValue: 'Image Url', isUrl: true)),
