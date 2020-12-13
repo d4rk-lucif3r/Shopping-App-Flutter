@@ -55,7 +55,6 @@ class Orders with ChangeNotifier {
 
     _orders = loadedOrders.reversed.toList();
     notifyListeners();
-    print(json.decode(response.body));
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
