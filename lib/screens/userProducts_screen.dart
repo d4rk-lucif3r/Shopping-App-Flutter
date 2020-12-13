@@ -21,20 +21,27 @@ class UserProductScreen extends StatelessWidget {
         ),
       ]),
       drawer: AppDrawer(),
-      body: Padding(
-        padding: EdgeInsets.all(10),
-        child: ListView.builder(
-          itemBuilder: (_, i) {
-            return Column(children: [
-              UserProductItems(
-                id: productData.items[i].id,
-                imageUrl: productData.items[i].imageUrl,
-                title: productData.items[i].title,
-              ),
-              Divider(),
-            ]);
-          },
-          itemCount: productData.items.length,
+      body: RefreshIndicator(
+
+        onRefresh: () async {
+          return await Provider.of<ProductsProviders>(context, listen: false)
+              .fetchAndSetProduct();
+        },
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: ListView.builder(
+            itemBuilder: (_, i) {
+              return Column(children: [
+                UserProductItems(
+                  id: productData.items[i].id,
+                  imageUrl: productData.items[i].imageUrl,
+                  title: productData.items[i].title,
+                ),
+                Divider(),
+              ]);
+            },
+            itemCount: productData.items.length,
+          ),
         ),
       ),
     );
