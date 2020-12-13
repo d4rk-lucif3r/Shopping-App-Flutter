@@ -17,7 +17,8 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
-
+    final scaffoldContext = ScaffoldMessenger.of(context);
+    final theme = Theme.of(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -48,8 +49,20 @@ class ProductItem extends StatelessWidget {
                           : Icons.favorite_border,
                       color: Colors.pink,
                     ),
-                    onPressed: () {
-                      product.togglefavoriteStatus();
+                    onPressed: () async {
+                      try {
+                        await product.togglefavoriteStatus(product.id);
+                      } on Exception catch (_) {
+                        scaffoldContext.showSnackBar(SnackBar(
+                          content: Text(
+                            'Error Changing Favorite',
+                            textAlign: TextAlign.center,
+                          ),
+                          duration: Duration(seconds: 2),
+                          backgroundColor: theme.primaryColor,
+                          elevation: 10,
+                        ));
+                      }
                     },
                   )),
           trailing: IconButton(

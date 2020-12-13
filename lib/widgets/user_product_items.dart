@@ -47,7 +47,10 @@ class UserProductItems extends StatelessWidget {
                         .deleteProduct(id);
                   } catch (error) {
                     scaffoldContext.showSnackBar(SnackBar(
-                      content: Text('Error Deleting'),
+                      content: Text(
+                        'Error Deleting',
+                        textAlign: TextAlign.center,
+                      ),
                       backgroundColor: theme.primaryColor,
                       elevation: 10,
                     ));
