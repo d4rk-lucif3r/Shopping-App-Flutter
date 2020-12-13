@@ -26,17 +26,22 @@ class Product with ChangeNotifier {
     var previousFavoriteStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
-    final response = await http.patch(url,
-        body: json.encode(
-          {
-            'isFavorite': !isFavorite,
-          },
-        ));
-    if (response.statusCode >= 400) {
+    try {
+      final response = await http.patch(url,
+          body: json.encode(
+            {
+              'isFavorite': isFavorite,
+            },
+          ));
+
+      if (response.statusCode >= 400) {
+        isFavorite = previousFavoriteStatus;
+        notifyListeners();
+        throw HttpException('Could not delete Product.');
+      }
+    }catch (error) {
       isFavorite = previousFavoriteStatus;
       notifyListeners();
-      throw HttpException('Could not delete Product.');
     }
-    previousFavoriteStatus = null;
   }
 }

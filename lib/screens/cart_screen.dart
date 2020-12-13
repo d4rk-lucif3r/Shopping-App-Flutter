@@ -7,9 +7,37 @@ import '../widgets/cart_item.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
+  static Future<void> addOrder(BuildContext context, Cart cartData) async {
+    try {
+      await Provider.of<Orders>(context, listen: false).addOrder(
+        cartData.items.values.toList(),
+        cartData.totalItems,
+      );
+      cartData.clearCart();
+    } catch (e) {
+      await showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: Colors.white,
+          title: Text('An error Occured'),
+          content: Text('Something Went Wrong'),
+          actions: [
+            FlatButton(
+              child: Text('Okay'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            )
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cartData = Provider.of<Cart>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Your Cart'),
@@ -37,17 +65,7 @@ class CartScreen extends StatelessWidget {
                     label: Text('\$${cartData.totalItems.toStringAsFixed(2)}'),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  FlatButton(
-                    onPressed: () {
-                      Provider.of<Orders>(context, listen: false).addOrder(
-                        cartData.items.values.toList(),
-                        cartData.totalItems,
-                      );
-                      cartData.clearCart();
-                    },
-                    child: Text('ORDER NOW'),
-                    textColor: Theme.of(context).accentColor,
-                  )
+                  OrderButton(cartData: cartData),
                 ],
               ),
             ),
@@ -67,6 +85,40 @@ class CartScreen extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key key,
+    @required this.cartData,
+  }) : super(key: key);
+
+  final Cart cartData;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      child: _isLoading ? CircularProgressIndicator() : Text('ORDER NOW'),
+      onPressed: (widget.cartData.totalItems <= 0 || _isLoading)
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
+              await CartScreen.addOrder(context, widget.cartData);
+              setState(() {
+                _isLoading = false;
+              });
+            },
+      textColor: Theme.of(context).accentColor,
     );
   }
 }
