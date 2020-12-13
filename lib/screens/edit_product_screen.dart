@@ -75,9 +75,27 @@ class _EditProductScreenState extends State<EditProductScreen> {
         _isLoading = true;
       });
       if (_editedProduct.id != null) {
-        Provider.of<ProductsProviders>(context, listen: false)
-            .updateProduct(_editedProduct.id, _editedProduct);
-        Navigator.of(context).pop();
+        try {
+          await Provider.of<ProductsProviders>(context, listen: false)
+              .updateProduct(_editedProduct.id, _editedProduct);
+        } catch (error) {
+          await showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              backgroundColor: Colors.white,
+              title: Text('An error Occured'),
+              content: Text('Something Went Wrong While Editing'),
+              actions: [
+                FlatButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                )
+              ],
+            ),
+          );
+        }
       } else {
         try {
           await Provider.of<ProductsProviders>(context, listen: false)
@@ -99,13 +117,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
               ],
             ),
           );
-        } finally {
-          setState(() {
-            _isLoading = false;
-          });
-          Navigator.of(context).pop();
         }
       }
+      setState(() {
+        _isLoading = false;
+        Navigator.of(context).pop();
+      });
     }
   }
 
@@ -134,8 +151,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
-              //backgroundColor: Theme.of(context).accentColor,
-            ))
+                  //backgroundColor: Theme.of(context).accentColor,
+                  ))
           : Card(
               elevation: 15,
               shadowColor: Colors.blueGrey,

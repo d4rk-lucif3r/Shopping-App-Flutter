@@ -119,13 +119,29 @@ class ProductsProviders with ChangeNotifier {
     }
   }
 
-  void updateProduct(String id, Product newProduct) {
-    final prodItems = _items.indexWhere((element) => element.id == id);
-    if (prodItems >= 0) {
-      _items[prodItems] = newProduct;
-      notifyListeners();
-    } else {
-      print('....');
+  Future<void> updateProduct(String id, Product newProduct) async {
+    try {
+      final url =
+          'https://shopping-app-daa11-default-rtdb.firebaseio.com/products/$id.json';
+      await http.patch(
+        url,
+        body: json.encode({
+          'title': newProduct.title,
+          'description': newProduct.description,
+          'price': newProduct.price,
+          'imageUrl': newProduct.imageUrl,
+        }),
+      );
+      final prodItems = _items.indexWhere((element) => element.id == id);
+      if (prodItems >= 0) {
+        _items[prodItems] = newProduct;
+        notifyListeners();
+      } else {
+        print('....');
+      }
+    } on Exception catch (error) {
+      print(error);
+      throw error;
     }
   }
 
