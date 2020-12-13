@@ -5,8 +5,7 @@ import '../models/http_exception.dart';
 import './product.dart';
 
 class ProductsProviders with ChangeNotifier {
-  List<Product> _items = [
-  ];
+  List<Product> _items = [];
   // var _showFavoritesOnly = false;
 
   List<Product> get items {
@@ -40,6 +39,9 @@ class ProductsProviders with ChangeNotifier {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
+      if (extractedData == null) {
+        return;
+      }
       extractedData.forEach((prodID, prodData) {
         loadedProducts.add(
           Product(
