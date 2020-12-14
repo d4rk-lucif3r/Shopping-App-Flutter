@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import './providers/auth.dart';
 import './providers/cart.dart';
 import './providers/orders.dart';
 import './providers/products_provider.dart';
+import './screens/auth_screen.dart';
 import './screens/cart_screen.dart';
 import './screens/edit_product_screen.dart';
 import './screens/orders_screen.dart';
@@ -30,6 +32,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => Orders(),
         ),
+        ChangeNotifierProvider(
+          create: (ctx) => Auth(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -41,7 +46,8 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.amberAccent,
           fontFamily: 'Lato',
         ),
-        initialRoute: '/',
+        home: AuthScreen(),
+        // initialRoute: 'AuthScreen()',
         onGenerateRoute: (settings) {
           switch (settings.name) {
             case '/':

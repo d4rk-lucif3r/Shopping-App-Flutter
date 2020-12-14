@@ -40,6 +40,8 @@ class ProductsProviders with ChangeNotifier {
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
       if (extractedData == null) {
+        _items = [];
+        notifyListeners();
         return;
       }
       extractedData.forEach((prodID, prodData) {
