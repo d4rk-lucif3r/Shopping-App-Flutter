@@ -36,44 +36,51 @@ class MyApp extends StatelessWidget {
           create: (ctx) => Auth(),
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Shopping App',
-        theme: ThemeData(
-          backgroundColor: Colors.black,
-          canvasColor: Colors.black,
-          primarySwatch: Colors.red,
-          accentColor: Colors.amberAccent,
-          fontFamily: 'Lato',
-        ),
-        home: AuthScreen(),
-        // initialRoute: 'AuthScreen()',
-        onGenerateRoute: (settings) {
-          switch (settings.name) {
-            case '/':
-              return CupertinoPageRoute(
-                  builder: (_) => ProductsOverviewScreen(), settings: settings);
-            case ProductDetailScreen.routeName:
-              return CupertinoPageRoute(
-                  builder: (_) => ProductDetailScreen(), settings: settings);
-            case CartScreen.routeName:
-              return CupertinoPageRoute(
-                  builder: (_) => CartScreen(), settings: settings);
+      child: Consumer<Auth>(
+        builder: (ctx, authData, _) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Shopping App',
+          theme: ThemeData(
+            backgroundColor: Colors.black,
+            canvasColor: Colors.black,
+            primarySwatch: Colors.red,
+            accentColor: Colors.amberAccent,
+            fontFamily: 'Lato',
+          ),
+          home: authData.isAuth ? ProductsOverviewScreen() : AuthScreen(),
+          initialRoute: authData.isAuth ? '/' : '/auth',
+          onGenerateRoute: (settings) {
+            switch (settings.name) {
+              case '/auth':
+                return CupertinoPageRoute(
+                    builder: (_) => AuthScreen(), settings: settings);
+              case '/':
+                return CupertinoPageRoute(
+                    builder: (_) => ProductsOverviewScreen(),
+                    settings: settings);
+              case ProductDetailScreen.routeName:
+                return CupertinoPageRoute(
+                    builder: (_) => ProductDetailScreen(), settings: settings);
+              case CartScreen.routeName:
+                return CupertinoPageRoute(
+                    builder: (_) => CartScreen(), settings: settings);
 
-            case OrdersScreen.routeName:
-              return CupertinoPageRoute(
-                  builder: (_) => OrdersScreen(), settings: settings);
-            case UserProductScreen.routeName:
-              return CupertinoPageRoute(
-                  builder: (_) => UserProductScreen(), settings: settings);
-            case EditProductScreen.routeName:
-              return CupertinoPageRoute(
-                  builder: (_) => EditProductScreen(), settings: settings);
-            default:
-              return CupertinoPageRoute(
-                  builder: (_) => ProductsOverviewScreen(), settings: settings);
-          }
-        },
+              case OrdersScreen.routeName:
+                return CupertinoPageRoute(
+                    builder: (_) => OrdersScreen(), settings: settings);
+              case UserProductScreen.routeName:
+                return CupertinoPageRoute(
+                    builder: (_) => UserProductScreen(), settings: settings);
+              case EditProductScreen.routeName:
+                return CupertinoPageRoute(
+                    builder: (_) => EditProductScreen(), settings: settings);
+              default:
+                return CupertinoPageRoute(
+                    builder: (_) => ProductsOverviewScreen(),
+                    settings: settings);
+            }
+          },
+        ),
       ),
     );
   }
