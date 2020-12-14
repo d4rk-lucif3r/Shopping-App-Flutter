@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../models/http_exception.dart';
 
 class Auth with ChangeNotifier {
   String _token;
@@ -18,9 +19,13 @@ class Auth with ChangeNotifier {
             'password': password,
             'returnSecureToken': true,
           }));
-      print(json.decode(response.body));
+      final responseData = json.decode(response.body);
+      if (responseData['error'] != null) {
+        throw HttpException(responseData['error']['message']);
+      }
     } on Exception catch (error) {
       print(error);
+      throw error;
     }
   }
 
