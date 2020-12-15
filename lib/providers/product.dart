@@ -9,6 +9,7 @@ class Product with ChangeNotifier {
   final String description;
   final double price;
   final String imageUrl;
+  
 
   bool isFavorite;
 
@@ -20,9 +21,9 @@ class Product with ChangeNotifier {
     @required this.imageUrl,
     this.isFavorite = false,
   });
-  Future<void> togglefavoriteStatus(String id) async {
+  Future<void> togglefavoriteStatus(String id,String authToken) async {
     final url =
-        'https://shopping-app-daa11-default-rtdb.firebaseio.com/products/$id.json';
+        'https://shopping-app-daa11-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
     var previousFavoriteStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/auth.dart';
 import '../providers/cart.dart';
 import '../providers/product.dart';
 import '../screens/product_detail_screen.dart';
@@ -17,6 +18,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final authData = Provider.of<Auth>(context, listen: false);
     final scaffoldContext = ScaffoldMessenger.of(context);
     final theme = Theme.of(context);
     return ClipRRect(
@@ -51,7 +53,8 @@ class ProductItem extends StatelessWidget {
                     ),
                     onPressed: () async {
                       try {
-                        await product.togglefavoriteStatus(product.id);
+                        await product.togglefavoriteStatus(
+                            product.id, authData.token);
                       } on Exception catch (_) {
                         scaffoldContext.showSnackBar(SnackBar(
                           content: Text(

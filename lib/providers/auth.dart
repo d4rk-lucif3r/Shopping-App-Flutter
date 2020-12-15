@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
 import '../models/http_exception.dart';
 
 class Auth with ChangeNotifier {
@@ -9,7 +11,6 @@ class Auth with ChangeNotifier {
   String _userId;
 
   bool get isAuth {
-    print(token);
     return token != null;
   }
 

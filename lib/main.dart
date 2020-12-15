@@ -24,16 +24,20 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
+          create: (ctx) => Auth(),
+        ),
+        ChangeNotifierProxyProvider<Auth, ProductsProviders>(
           create: (ctx) => ProductsProviders(),
+          update: (ctx, authData, previousProductProvider) =>
+              previousProductProvider..authToken = authData.token,
         ),
         ChangeNotifierProvider(
           create: (ctx) => Cart(),
         ),
-        ChangeNotifierProvider(
+        ChangeNotifierProxyProvider<Auth, Orders>(
           create: (ctx) => Orders(),
-        ),
-        ChangeNotifierProvider(
-          create: (ctx) => Auth(),
+          update: (ctx, authData, previousOrders) =>
+              previousOrders..authToken = authData.token,
         ),
       ],
       child: Consumer<Auth>(
@@ -48,7 +52,6 @@ class MyApp extends StatelessWidget {
             fontFamily: 'Lato',
           ),
           home: authData.isAuth ? ProductsOverviewScreen() : AuthScreen(),
-
           onGenerateRoute: (settings) {
             switch (settings.name) {
               case ProductDetailScreen.routeName:
@@ -72,8 +75,6 @@ class MyApp extends StatelessWidget {
                     builder: (_) => AuthScreen(), settings: settings);
             }
           },
-          
-          
         ),
       ),
     );
