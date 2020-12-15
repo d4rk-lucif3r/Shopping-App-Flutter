@@ -57,6 +57,9 @@ class MyApp extends StatelessWidget {
           home: authData.isAuth ? ProductsOverviewScreen() : AuthScreen(),
           onGenerateRoute: (settings) {
             switch (settings.name) {
+              case AuthScreen.routeName:
+                return CupertinoPageRoute(
+                    builder: (_) => AuthScreen(), settings: settings);
               case ProductDetailScreen.routeName:
                 return CupertinoPageRoute(
                     builder: (_) => ProductDetailScreen(), settings: settings);
