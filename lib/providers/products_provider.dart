@@ -5,6 +5,7 @@ import '../models/http_exception.dart';
 import './product.dart';
 
 class ProductsProviders with ChangeNotifier {
+  String userId;
   String authToken;
 
   List<Product> _items = [];
@@ -34,9 +35,17 @@ class ProductsProviders with ChangeNotifier {
   //   _showFavoritesOnly = false;
   //   notifyListeners();
   // }
-  Future<void> fetchAndSetProduct() async {
+  void credentialSetter(String gotUserId, String gotAuthToken) {
+    userId = gotUserId;
+    authToken = gotAuthToken;
+  }
+
+  Future<void> fetchAndSetProduct([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorID"&equalTo="$userId"' : '';
+  
     final url =
-        'https://shopping-app-daa11-default-rtdb.firebaseio.com/products.json?auth=$authToken';
+        'https://shopping-app-daa11-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString';
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -46,6 +55,10 @@ class ProductsProviders with ChangeNotifier {
         notifyListeners();
         return;
       }
+      final favUrl =
+          'https://shopping-app-daa11-default-rtdb.firebaseio.com/userFavorites/$userId.json?auth=$authToken';
+      final favoriteResponse = await http.get(favUrl);
+      final favoriteData = json.decode(favoriteResponse.body);
       extractedData.forEach((prodID, prodData) {
         loadedProducts.add(
           Product(
@@ -54,7 +67,8 @@ class ProductsProviders with ChangeNotifier {
             description: prodData['description'],
             price: prodData['price'],
             imageUrl: prodData['imageUrl'],
-            isFavorite: prodData['isFavorite'],
+            isFavorite:
+                favoriteData == null ? false : favoriteData[prodID] ?? false,
           ),
         );
       });
@@ -72,11 +86,11 @@ class ProductsProviders with ChangeNotifier {
       final response = await http.post(
         url,
         body: json.encode({
+          'creatorID': userId,
           'title': product.title,
           'description': product.description,
           'price': product.price,
           'imageUrl': product.imageUrl,
-          'isFavorite': product.isFavorite,
         }),
       );
       final newProduct = Product(

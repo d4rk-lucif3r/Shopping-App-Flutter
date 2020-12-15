@@ -9,7 +9,6 @@ class Product with ChangeNotifier {
   final String description;
   final double price;
   final String imageUrl;
-  
 
   bool isFavorite;
 
@@ -21,18 +20,17 @@ class Product with ChangeNotifier {
     @required this.imageUrl,
     this.isFavorite = false,
   });
-  Future<void> togglefavoriteStatus(String id,String authToken) async {
+  Future<void> togglefavoriteStatus(
+      String id, String authToken, String userId) async {
     final url =
-        'https://shopping-app-daa11-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
+        'https://shopping-app-daa11-default-rtdb.firebaseio.com/userFavorites/$userId/$id.json?auth=$authToken';
     var previousFavoriteStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
     try {
-      final response = await http.patch(url,
+      final response = await http.put(url,
           body: json.encode(
-            {
-              'isFavorite': isFavorite,
-            },
+            isFavorite,
           ));
 
       if (response.statusCode >= 400) {
@@ -40,7 +38,7 @@ class Product with ChangeNotifier {
         notifyListeners();
         throw HttpException('Could not delete Product.');
       }
-    }catch (error) {
+    } catch (error) {
       isFavorite = previousFavoriteStatus;
       notifyListeners();
     }

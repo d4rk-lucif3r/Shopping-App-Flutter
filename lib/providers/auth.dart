@@ -22,6 +22,14 @@ class Auth with ChangeNotifier {
     }
     return null;
   }
+  String get userId{
+        if (_expiryDate != null &&
+        _expiryDate.isAfter(DateTime.now()) &&
+        _userId != null) {
+      return _userId;
+    }
+    return null;
+  }
 
   Future<void> _authenticated(
       String email, String password, String urlSegment) async {
