@@ -48,16 +48,9 @@ class MyApp extends StatelessWidget {
             fontFamily: 'Lato',
           ),
           home: authData.isAuth ? ProductsOverviewScreen() : AuthScreen(),
-          initialRoute: authData.isAuth ? '/' : '/auth',
+
           onGenerateRoute: (settings) {
             switch (settings.name) {
-              case '/auth':
-                return CupertinoPageRoute(
-                    builder: (_) => AuthScreen(), settings: settings);
-              case '/':
-                return CupertinoPageRoute(
-                    builder: (_) => ProductsOverviewScreen(),
-                    settings: settings);
               case ProductDetailScreen.routeName:
                 return CupertinoPageRoute(
                     builder: (_) => ProductDetailScreen(), settings: settings);
@@ -76,10 +69,11 @@ class MyApp extends StatelessWidget {
                     builder: (_) => EditProductScreen(), settings: settings);
               default:
                 return CupertinoPageRoute(
-                    builder: (_) => ProductsOverviewScreen(),
-                    settings: settings);
+                    builder: (_) => AuthScreen(), settings: settings);
             }
           },
+          
+          
         ),
       ),
     );

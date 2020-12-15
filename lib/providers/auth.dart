@@ -9,6 +9,7 @@ class Auth with ChangeNotifier {
   String _userId;
 
   bool get isAuth {
+    print(token);
     return token != null;
   }
 

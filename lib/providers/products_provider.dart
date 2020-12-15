@@ -58,7 +58,7 @@ class ProductsProviders with ChangeNotifier {
       });
       _items = loadedProducts;
       notifyListeners();
-    } on Exception catch (error) {
+    } on HttpException catch (error) {
       throw error;
     }
   }
