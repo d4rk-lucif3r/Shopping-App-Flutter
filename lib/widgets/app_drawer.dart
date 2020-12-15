@@ -20,6 +20,7 @@ class AppDrawer extends StatelessWidget {
               child: Text('Continue'),
               onPressed: () async {
                 await Provider.of<Auth>(context, listen: false).logout();
+                Navigator.of(context).pushReplacementNamed('/');
                 Navigator.of(ctx).pop();
               },
             )

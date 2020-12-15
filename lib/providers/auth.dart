@@ -104,6 +104,8 @@ class Auth with ChangeNotifier {
       _authTimer.cancel();
       _authTimer = null;
     }
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('credentials');
     notifyListeners();
   }
 
