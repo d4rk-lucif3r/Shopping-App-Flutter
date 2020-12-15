@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
             create: (ctx) => ProductsProviders(),
             update: (ctx, authData, previousProductProvider) =>
                 previousProductProvider
-                  ..credentialSetter(authData.userId, authData.token)),
+                  ..credentialSetterProducts(authData.userId, authData.token)),
         //   previousProductProvider..authToken = authData.token;
         //   previousProductProvider..userId = authData.userId;
         // }),
@@ -39,8 +39,8 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProxyProvider<Auth, Orders>(
           create: (ctx) => Orders(),
-          update: (ctx, authData, previousOrders) =>
-              previousOrders..authToken = authData.token,
+          update: (ctx, authData, previousOrders) => previousOrders
+            ..credentialSetterOrders(authData.userId, authData.token),
         ),
       ],
       child: Consumer<Auth>(

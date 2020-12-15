@@ -35,7 +35,7 @@ class ProductsProviders with ChangeNotifier {
   //   _showFavoritesOnly = false;
   //   notifyListeners();
   // }
-  void credentialSetter(String gotUserId, String gotAuthToken) {
+  void credentialSetterProducts(String gotUserId, String gotAuthToken) {
     userId = gotUserId;
     authToken = gotAuthToken;
   }
