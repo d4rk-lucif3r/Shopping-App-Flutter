@@ -11,6 +11,11 @@ class UserProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> _refreshStatus() async {
+      return await Provider.of<ProductsProviders>(context, listen: false)
+          .fetchAndSetProduct(true);
+    }
+
     return Scaffold(
         appBar: AppBar(title: const Text('Your Products'), actions: <Widget>[
           IconButton(
@@ -22,19 +27,14 @@ class UserProductScreen extends StatelessWidget {
         ]),
         drawer: AppDrawer(),
         body: FutureBuilder(
-          future: Provider.of<ProductsProviders>(context, listen: false)
-              .fetchAndSetProduct(true),
+          future: _refreshStatus(),
           builder: (ctx, dataSnapShot) =>
               dataSnapShot.connectionState == ConnectionState.waiting
                   ? Center(
                       child: CircularProgressIndicator(),
                     )
                   : RefreshIndicator(
-                      onRefresh: () async {
-                        return await Provider.of<ProductsProviders>(context,
-                                listen: false)
-                            .fetchAndSetProduct(true);
-                      },
+                      onRefresh: _refreshStatus,
                       child: Consumer<ProductsProviders>(
                         builder: (ctx, productData, _) => Padding(
                           padding: EdgeInsets.all(10),
