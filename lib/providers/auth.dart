@@ -1,5 +1,7 @@
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,6 +14,25 @@ class Auth with ChangeNotifier {
   Timer _authTimer;
   bool get isAuth {
     return token != null;
+  }
+
+  Future<bool> tryAutoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('credentials')) {
+      return false;
+    }
+    final extractedCredentials =
+        json.decode(prefs.getString('credentials')) as Map<String, Object>;
+    final expiryDate = DateTime.parse(extractedCredentials['expiry']);
+    if (expiryDate.isBefore(DateTime.now())) {
+      return false;
+    }
+    _token = extractedCredentials['token'];
+    _userId = extractedCredentials['userID'];
+    _expiryDate = expiryDate;
+    notifyListeners();
+    _autoLogout();
+    return true;
   }
 
   String get token {
@@ -54,6 +75,13 @@ class Auth with ChangeNotifier {
       _userId = responseData['localId'];
       _autoLogout();
       notifyListeners();
+      final prefs = await SharedPreferences.getInstance();
+      final userData = json.encode({
+        'token': _token,
+        'userID': _userId,
+        'expiry': _expiryDate.toIso8601String(),
+      });
+      prefs.setString('credentials', userData);
     } on Exception catch (error) {
       print(error);
       throw error;
